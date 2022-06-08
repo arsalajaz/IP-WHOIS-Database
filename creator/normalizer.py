@@ -6,6 +6,7 @@ from os import path
 from requests import get
 from socket import inet_aton
 from struct import unpack
+from json import loads, dumps
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
@@ -46,7 +47,6 @@ class ASN(db.Model):
     org = db.Column(db.String(255))
     website = db.Column(db.String(255))
     v4 = db.relationship('V4')
-    
 
 
 if not path.exists('./' + DB_NAME):
@@ -64,8 +64,10 @@ def create():
     ip = V4.query
     for i in ip:
         ip = i.ip_start[:-1] + "1"
-        print(f"{i.ip_start} => {ip}")
-    return "Fertig"
+        answer = get(f'https://ipinfo.io/{ip}?token={var.credential}')
+        test = loads(answer.text)['city'], loads(answer.text)['loc']
+        break
+    return test
 
 
 def go():
