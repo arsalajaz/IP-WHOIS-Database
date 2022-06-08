@@ -19,6 +19,8 @@ class var():
     clock = 0
     print = 0
     array = []
+    with open('credential.txt') as f:
+        credential = f.read()
 
 class V4(db.Model):
     decimal_start = db.Column(db.Integer, primary_key=True)
@@ -58,9 +60,12 @@ def create():
     print('start read')
     go()
     print('start write')
-    db.session.commit()
-    print('finish')
-    return 'finish'
+    #db.session.commit()
+    ip = V4.query
+    for i in ip:
+        ip = i.ip_start[:-1] + "1"
+        print(f"{i.ip_start} => {ip}")
+    return "Fertig"
 
 
 def go():
