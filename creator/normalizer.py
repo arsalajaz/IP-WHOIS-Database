@@ -58,20 +58,50 @@ if not path.exists('./' + DB_NAME):
 @app.route('/')
 def create():
     print('start read')
-    go()
     print('start write')
-    #db.session.commit()
     ip = V4.query
     for i in ip:
-        ip = i.ip_start[:-1] + "1"
-        answer = get(f'https://ipinfo.io/{ip}?token={var.credential}')
-        test = loads(answer.text)['city'], loads(answer.text)['loc']
-        break
-    return test
+        if i.region == None or not i.region:
+            ip = i.ip_start[:-1] + "1"
+            answer = get(f'https://ipinfo.io/{ip}?token={var.credential}')
+            try:
+                i.lon = loads(answer.text)['loc'].split(',')[0]
+            except: i.lon = '0'
+            try:
+                i.lat = loads(answer.text)['loc'].split(',')[1]
+            except: i.lat = '0'
+            try:
+                i.region = loads(answer.text)['region']
+            except: i.region = '0'
+            try:
+                i.city = loads(answer.text)['city']
+            except: i.city = '0'
+            try:
+                i.zip = loads(answer.text)['postal'] 
+            except: i.zip = '0'
+            try:
+                i.countryCode =  loads(answer.text)['country']
+            except: i.countryCode = '0'
+            try:
+                i.name = loads(answer.text)['asn']['name']
+            except: i.name = '0'
+            try:
+                i.isp =  loads(answer.text)['asn']['type']
+            except: i.isp = '0'
+            try:
+                i.org = loads(answer.text)['company']['name']
+            except: i.org = '0'
+            try:
+                i.website = loads(answer.text)['asn']['domain']
+            except: i.website = '0'
+            db.session.commit()
+            r = V4.query.filter_by(ip_start=i.ip_start).first()
+            print(r.ip_start, r.lon, r.lat, r.region, r.city, r.zip, r.asn, r.countryCode, r.name, r.isp, r.org, r.website)
+        else:
+            pass
+        
+    return f"Fertig"
 
-
-def go():
-    pass
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0') 
