@@ -19,8 +19,7 @@ class var():
     pass
 
 class V4(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    decimal_start = db.Column(db.Integer, nullable=False)
+    decimal_start = db.Column(db.Integer, primary_key=True)
     decimal_end = db.Column(db.Integer, nullable=False)
     ip_start = db.Column(db.String(15))
     ip_end = db.Column(db.String(15))
@@ -73,7 +72,9 @@ def create():
         if var.clock > var.print:
             print(var.print)
             var.print = var.print + 10000
+    print('start write')
     db.session.commit()
+    print('finish')
     
     return 'finish'
 
