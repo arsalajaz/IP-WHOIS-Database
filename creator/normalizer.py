@@ -80,7 +80,10 @@ def go():
             var.print = var.print + 10000
     print('appending')
     for i in var.array:
-            db.session.add(i)
+        try:
+            db.session.add(ASN(id=int(i)))
+        except Exception as e:
+            print(f'ERROR on {i}:{e}')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0') 
