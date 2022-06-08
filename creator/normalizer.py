@@ -16,7 +16,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
 db.init_app(app)
 
 class var():
-    pass
+    clock = 0
+    print = 0
+    array = []
 
 class V4(db.Model):
     decimal_start = db.Column(db.Integer, primary_key=True)
@@ -53,34 +55,32 @@ if not path.exists('./' + DB_NAME):
 
 @app.route('/')
 def create():
+    print('start read')
+    go()
+    print('start write')
+    db.session.commit()
+    print('finish')
+    return 'finish'
+
+
+def go():
     with open('./raw/ip2asn-v4.tsv', 'r') as f:
         var.raw = f.read().split('\n')
 
-    var.clock = 0
-    var.print = 0
     for i in var.raw:
-        var.array = i.split('\t')
         try:
-            decimal_start = unpack("!L", inet_aton(var.array[0]))[0]
-            decimal_end = unpack("!L", inet_aton(var.array[1]))[0]
-            ip = V4(decimal_start=decimal_start, decimal_end=decimal_end, ip_start=var.array[0], ip_end=var.array[1])
-            db.session.add(ip)
-            
+            var.asn = i.split('\t')[2]
         except Exception as e:
-            print(f'ERROR with {i}: {e}')
+            print(f"ERROR on {i}: {e}")
+        if var.asn not in var.array:
+            var.array.append(var.asn)
         var.clock = var.clock + 1
         if var.clock > var.print:
             print(var.print)
             var.print = var.print + 10000
-    print('start write')
-    db.session.commit()
-    print('finish')
-    
-    return 'finish'
-
-
-
-
+    print('appending')
+    for i in var.array:
+            db.session.add(i)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0') 
