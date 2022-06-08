@@ -64,26 +64,7 @@ def create():
 
 
 def go():
-    with open('./raw/ip2asn-v4.tsv', 'r') as f:
-        var.raw = f.read().split('\n')
-
-    for i in var.raw:
-        try:
-            var.asn = i.split('\t')[2]
-        except Exception as e:
-            print(f"ERROR on {i}: {e}")
-        if var.asn not in var.array:
-            var.array.append(var.asn)
-        var.clock = var.clock + 1
-        if var.clock > var.print:
-            print(var.print)
-            var.print = var.print + 10000
-    print('appending')
-    for i in var.array:
-        try:
-            db.session.add(ASN(id=int(i)))
-        except Exception as e:
-            print(f'ERROR on {i}:{e}')
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0') 
