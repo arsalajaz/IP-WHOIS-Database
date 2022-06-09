@@ -10,16 +10,24 @@ from json import loads, dumps
 
 
 
-with open('./ipfull2.txt', 'r', encoding="utf-8") as f:
+with open('./ipfull.txt', 'r', encoding="utf-8") as f:
     ipfull = f.read().split('\n')
 
+number = 0
 print('START IP ARRAY')
 ipfullarray = []
 for ip in ipfull:
-    part1 = ip.split(',')[0][:-1] + "0"
-    part2 = ip.replace(ip.split(',')[0], "")
-    with open('./ipfull3.txt', 'a', encoding="utf-8") as f:
-        f.write(f'{part1}{part2}\n')
+    number = number + 1
+    try:
+        array = ip.split(',')
+        if array[1] == '0':
+            pass
+        with open('./ipfull2.txt', 'a', encoding="utf-8") as f:
+            f.write(f"{ip}\n")
+    except:
+        print(f'ERROR {number}: {ip}')
+
+
 
 
 
