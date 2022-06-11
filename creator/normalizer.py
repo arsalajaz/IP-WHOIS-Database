@@ -19,7 +19,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-with open('./creator/raw/ip.csv', 'r') as f:
+with open('./creator/ipfull.txt', 'r', encoding='utf-8') as f:
     ips = f.read().split('\n')
 
 class var():
@@ -33,9 +33,9 @@ def create():
     for ip in ips:
         array = ip.split(',')
         try:
-            cur.execute(f'''INSERT INTO v4(decimal_start,decimal_end,ip_start,ip_end,asn,countryCode) VALUES ({array[0]},{array[1]},"{array[2]}","{array[3]}",{array[9]},"{array[10]}")''')
+            cur.execute(f'''UPDATE v4 set lon = {array[1]}, lat = {array[2]}, region = {array[3]}, city = {array[4]}, zip = {array[5]} ''')
             mysql.connection.commit()
-            print(f"{array[0]},{array[1]},{array[2]},{array[3]},{array[9]},{array[10]}")
+            print(f"lon = {array[1]}, lat = {array[2]}, region = {array[3]}, city = {array[4]}, zip = {array[5]}")
         except Exception as e:
             print(e)
     return f"Fertig"
