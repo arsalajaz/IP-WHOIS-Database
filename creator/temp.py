@@ -10,32 +10,50 @@ from json import loads, dumps
 
 
 
-with open('./ipfull2.txt', 'r', encoding="utf-8") as f:
-    ipfull = f.read().split('\n')
+
 with open('./raw/ip2asn-v4.tsv', 'r', encoding="utf-8") as f:
     ip2asn = f.read().split('\n')
+with open('./ipfull2.txt', 'r', encoding="utf-8") as f:
+    ipfull = f.read().split('\n')
 
-asnarray = []
+print('STEP 1')
+fullarray = []
 for ip in ipfull:
-    asnarray.append(ip.split(',')[0])
+    fullarray.append(ip.split(',')[0])
 
+print('STEP 2')
+asnnumber = 0
+asnarray = []
+for ip in ip2asn:
+    asnnumber = asnnumber + 1
+    asnarray.append(ip.split('\t')[0])
+print(asnnumber)
 
+print('STEP 3')
 number = 0
 number2 = 0
+errnumber = 0
+exnumber = 0
 print('START IP ARRAY')
-ipfullarray = []
 
 for ip in ip2asn:
-    
+    number = number + 1
     try:
         array = ip.split('\t')
-        if array[0] in asnarray:
-            pass
+        if array[0] in fullarray:
+        #for ip2 in ipfull:
+        #    if ip2.split(',')[0] == array[0]:
+                exnumber = exnumber + 1
+        #        with open('./ipfull.txt', 'a', encoding="utf-8") as f:
+        #            f.write(f'{ip2}\n')
+        #        print(f"_{exnumber}: {ip2}")
+        #        break
+
         else:
             number2 = number2 + 1
             try:
                 ip = array[0][:-1] + "1"
-                answer = get(f'https://ipinfo.io/{array[0]}?token=402850732eb60c')
+                answer = get(f'https://ipinfo.io/{array[0]}?token=00607e30e8c82d')
                 try:
                     lon = loads(answer.text)['loc'].split(',')[0]
                 except: lon = '0'
@@ -69,9 +87,10 @@ for ip in ip2asn:
 
                 with open('./ipfull.txt', 'a', encoding="utf-8") as f:
                     f.write(f"{array[0]},{lon},{lat},{region},{city},{zip},{countryCode},{name},{isp},{org},{website}\n")
-                print(f"{number}:{number2}: {ip},{lon},{lat},{region},{city},{zip},{countryCode},{name},{isp},{org},{website}\n")
+                print(f"{number}/{asnnumber}|{number2}|{errnumber}: {array[0]},{lon},{lat},{region},{city},{zip},{countryCode},{name},{isp},{org},{website}")
 
-            except socket.error:        
+            except socket.error:  
+                errnumber = errnumber + 1      
                 print(f'IP not valid: {ip}')
 
 
@@ -79,7 +98,7 @@ for ip in ip2asn:
     except:
         print(f'ERROR {number2}/{number}: {ip}')
 
-print(number, number2)
+print(f"FERTIG: {number}/{asnnumber}|{number2}|{errnumber}")
 
 
 
