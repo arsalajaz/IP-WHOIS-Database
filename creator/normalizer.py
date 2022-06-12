@@ -25,29 +25,21 @@ mysql = MySQL(app)
 
 @app.route('/')
 def create():
-    with open('./creator/ipfull.txt', 'r', encoding='utf-8') as f:
-        ips = f.read().split('\n')
-    app.permanent_session_lifetime = timedelta(minutes=60)
+    app.permanent_session_lifetime = timedelta(minutes=1000)
     print('START')
     cur = mysql.connection.cursor()
     num = 0
     clock = 0
+    cur.execute(f'''select ip_start, lon from v4''')
+    ips = loads(str(cur.fetchall()))
+    print(ips)
     for ip in ips:
-        array = ip.split(',')
-        try:
-            cur.execute(f'''select asn from v4 where ip_start = "{array[0]}"''')
-            string = str(cur.fetchall()).replace("({'asn': '", "").replace("'},)", "")
-            cur.execute(f'''UPDATE asn set name = "{array[7]}", type = "{array[8]}",  org = "{array[9]}", website = "{array[10]}" where id = "{string}"''')
-            #print(f'''UPDATE asn set name = "{array[7]}", type = "{array[8]}",  org = "{array[9]}", website = "{array[10]}"''')
-        except Exception as e:
-                print(f'ERROR: {e} at {array}')
-                break
         if num > clock:
             clock = clock + 1000
             print(clock)
-            mysql.connection.commit()
+            #mysql.connection.commit()
         num = num + 1
-    mysql.connection.commit()
+    #mysql.connection.commit()
     return f"Fertig"
 
 
