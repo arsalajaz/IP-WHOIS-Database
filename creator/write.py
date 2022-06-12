@@ -10,9 +10,9 @@ from struct import unpack
 from json import loads, dumps
 import mysql.connector
 
-token = "28f52b79d9c6d2"
+token = ["28f52b79d9c6d2","dff3c8c8ca4a91","e35c33eafbcde3","c5f3cfde3fb44a","18927d84f3abf5","b59de61346402d","eadbed36a6150e","62dda8efa2144e"]
 start = 0
-count = 45000
+count = 250000
 
 mydb = mysql.connector.connect(
   host="127.0.0.1",
@@ -30,6 +30,7 @@ ips = sql.fetchall()
 num = 0
 good = 0
 done = 0
+api = 0
 
 for x in ips:
   num = num + 1
@@ -40,8 +41,14 @@ for x in ips:
         good = good + 1
     else:
         done = done + 1
-        ip = x[2][:-1] + "1"
-        answer = get(f'https://ipinfo.io/{x[2][:-1] + "1"}?token={token}')
+        if x[2][-1] == '0':
+            ip = x[2][:-1] + "1"
+        answer = get(f'https://ipinfo.io/{x[2][:-1] + "1"}?token={token[api]}')
+        if api == 6:
+            api = 0
+        else:
+            api = api + 1 
+
         try:
             lon = loads(answer.text)['loc'].split(',')[0]
         except: lon = '0'
@@ -76,10 +83,11 @@ for x in ips:
             website = loads(answer.text)['asn']['domain']
         except: website = '0'
         try:
-            sql.execute(f'''INSERT IGNORE INTO asn(id, name, type, org, website) VALUES  ({int(asn.replace('AS',''))},"{name}","{isp}","{org}","{website}")''')
-            sql.execute(f'''UPDATE v4 SET lon="{lon}",lat="{lat}",region="{region}",city="{city}",zip="{zip}",countryCode="{countryCode}",asn={int(asn.replace('AS',''))} WHERE decimal_start = {x[0]}''')
-            mydb.commit()
-            print(f'{num}:{good}: {ip}')
+            with open('C:/Users/Janis/Documents/GitHub/IP-WHOIS-Database/creator/ip.txt', 'a', encoding="utf-8") as f:
+                f.write(f'''"{x[2]}";"{lon}";"{lat}";"{region}";"{city}";"{zip}";"{countryCode}";"{int(asn.replace('AS',''))}"\n''')
+            with open('C:/Users/Janis/Documents/GitHub/IP-WHOIS-Database/creator/asn.txt', 'a', encoding="utf-8") as f:
+                f.write(f'''"{int(asn.replace('AS',''))}";"{name}";"{isp}";"{org}";"{website}"\n''')
+            print(f'{num}:{good}:{api}: {ip}')
         except Exception as e:
             with open('C:/Users/Janis/Documents/GitHub/IP-WHOIS-Database/creator/error.txt', 'a', encoding="utf-8") as f:
                 f.write(f'ERROR: {e} \nVALUES:{x}, {answer.text}')
