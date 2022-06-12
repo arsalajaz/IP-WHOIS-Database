@@ -35,8 +35,10 @@ def create():
     for ip in ips:
         array = ip.split(',')
         try:
-            cur.execute(f'''UPDATE v4 set lon = "{array[1]}", lat = "{array[2]}", region = "{array[3]}", city = "{array[4]}", zip = "{array[5]}" where ip_start = "{array[0]}"''')
-            print(f"lon = {array[1]}, lat = {array[2]}, region = {array[3]}, city = {array[4]}, zip = {array[5]}")
+            cur.execute(f'''select asn from v4 where ip_start = "{array[0]}"''')
+            string = str(cur.fetchall()).replace("({'asn': '", "").replace("'},)", "")
+            cur.execute(f'''UPDATE asn set name = "{array[7]}", type = "{array[8]}",  org = "{array[9]}", website = "{array[10]}" where id = "{string}"''')
+            #print(f'''UPDATE asn set name = "{array[7]}", type = "{array[8]}",  org = "{array[9]}", website = "{array[10]}"''')
         except Exception as e:
                 print(f'ERROR: {e} at {array}')
                 break
@@ -50,4 +52,4 @@ def create():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0') 
+    app.run(debug=True, host='0.0.0.0', port=5001) 
