@@ -10,9 +10,9 @@ from struct import unpack
 from json import loads, dumps
 import mysql.connector
 
-token = ["28f52b79d9c6d2","dff3c8c8ca4a91","e35c33eafbcde3","c5f3cfde3fb44a","18927d84f3abf5","b59de61346402d","eadbed36a6150e","62dda8efa2144e"]
-start = 0
-count = 250000
+token = ["94d06e691b6c2d","98173cc088c4cc","874eaa20b62d13","58ef7567bad2b3","27937e1a43f583","0e96e71dcf1da2","151a7b4db40761","b155b603bbc67d"]
+start = 250000
+count = 230000
 
 mydb = mysql.connector.connect(
   host="127.0.0.1",
@@ -83,9 +83,9 @@ for x in ips:
             website = loads(answer.text)['asn']['domain']
         except: website = '0'
         try:
-            with open('C:/Users/Janis/Documents/GitHub/IP-WHOIS-Database/creator/ip.txt', 'a', encoding="utf-8") as f:
+            with open('C:/Users/Janis/Documents/GitHub/IP-WHOIS-Database/creator/ip2.txt', 'a', encoding="utf-8") as f:
                 f.write(f'''"{x[2]}";"{lon}";"{lat}";"{region}";"{city}";"{zip}";"{countryCode}";"{int(asn.replace('AS',''))}"\n''')
-            with open('C:/Users/Janis/Documents/GitHub/IP-WHOIS-Database/creator/asn.txt', 'a', encoding="utf-8") as f:
+            with open('C:/Users/Janis/Documents/GitHub/IP-WHOIS-Database/creator/asn2.txt', 'a', encoding="utf-8") as f:
                 f.write(f'''"{int(asn.replace('AS',''))}";"{name}";"{isp}";"{org}";"{website}"\n''')
             print(f'{num}:{good}:{api}: {ip}')
         except Exception as e:

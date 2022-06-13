@@ -17,6 +17,7 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_DB'] = 'ip'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 mysql = MySQL(app)
 
@@ -25,6 +26,10 @@ mysql = MySQL(app)
 
 @app.route('/json/<ip>')
 def create(ip):
+    result = fetchip(ip)
+    return result
+
+def fetchip(ip):
     cur = mysql.connection.cursor()
     ip_decimal = unpack("!L", inet_aton(ip))[0]
     cur.execute(f'''
@@ -59,16 +64,11 @@ def create(ip):
     LEFT JOIN asn on v4.asn = asn.id
     LEFT JOIN country on v4.countryCode = country.id 
     WHERE v4.decimal_start < {ip_decimal}
-
     order by v4.decimal_start desc
-
     limit 1
-
     ''')
-    
-    
     result = cur.fetchone()
-    return f"{ip_decimal}{result}"
+    return result
 
 
 if __name__ == '__main__':
