@@ -20,7 +20,7 @@ mydb = mysql.connector.connect(
 sql = mydb.cursor()
 
 
-with open('./creator/asn.txt', 'r', encoding='utf-8') as f:
+with open('./creator/asn2.txt', 'r', encoding='utf-8') as f:
     ips = f.read().split('\n')
 
 num = 0
@@ -37,5 +37,10 @@ for ip in ips:
         
     except Exception as e:
         print(e, f'''INSERT INTO asn(id,name,type,org,website) VALUES ({array[0]},"{array[1]}","{array[2]}","{array[3]}","{array[4]})''')
-
+    if num > clock:
+        print(clock)
+        clock = clock + 1000
+        mydb.commit()
+    else:
+        num = num + 1
 mydb.commit()

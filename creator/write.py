@@ -20,7 +20,7 @@ mydb = mysql.connector.connect(
 sql = mydb.cursor()
 
 
-with open('./creator/ip.txt', 'r', encoding='utf-8') as f:
+with open('./creator/ip2.txt', 'r', encoding='utf-8') as f:
     ips = f.read().split('\n')
 
 num = 0
