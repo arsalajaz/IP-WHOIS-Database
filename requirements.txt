@@ -1,5 +1,0 @@
-flask
-flask_mysqldb
-mysqlclient
-requests
-gunicorn
